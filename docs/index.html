@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="theme-color" content="#ffffff"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="RotaMeter PRO"/>
+<meta name="description" content="RotaMeter PRO — mapa GPS, percurso, estimativas de custo e relatório PDF. Protótipo não homologado."/>
+<link rel="manifest" href="./manifest.webmanifest?v=12-1-realmap"/>
+<link rel="apple-touch-icon" href="./icon-192.png"/>
+<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet"/>
+<link rel="stylesheet" href="./styles.css?v=12-1-realmap-20261020"/>
+<title>RotaMeter PRO V12.1 | Premium White · Carro e Mota</title>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><div class="brand-mark"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 22L13 8h11l-5 7h9L17 26H8l6-9H9z" fill="currentColor"/></svg></div><div><div class="brand-title">RotaMeter <span>PRO</span></div><div class="brand-sub">V12.1 · MAPA REAL · PREMIUM WHITE</div></div></div>
+    <div class="top-actions"><button class="chip chip-muted" id="modeBtn" type="button" aria-label="Alternar carro e mota">Carro <span>⌄</span></button><div id="gpsChip" class="chip chip-wait"><i></i><span id="gpsLabel">GPS a iniciar</span></div></div>
+  </header>
+  <main class="workspace">
+    <section class="map-card" aria-label="Mapa de navegação, seguimento e percurso GPS">
+      <div id="map" role="application" aria-label="Mapa vetorial de condução com zoom e orientação GPS"></div>
+      <div id="mapBackground" class="map-background" aria-hidden="true"><div class="map-fallback-city">V12.1 · MAPA CLARO</div><div class="map-fallback-message" id="mapFallbackMessage">A carregar mapa com ruas e pontos de referência…</div></div>
+      <div class="map-shade"></div>
+      <div class="drive-banner" id="driveBanner" aria-live="polite">
+        <div class="drive-arrow" id="driveArrow">↑</div>
+        <div class="drive-instruction"><strong id="driveMeters">MAPA EM DIRETO</strong><span id="driveStreet">Escolha o destino para navegar</span></div>
+        <span class="drive-version">V12.1</span>
+      </div>
+      <div class="map-heading"><div class="map-live"><span class="live-dot"></span> PERCURSO EM DIRETO</div><span class="map-accuracy" id="accuracyLabel">À espera do GPS</span></div>
+      <form id="destinationForm" class="destination" autocomplete="off">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>
+        <input id="destinationInput" name="destination" type="search" placeholder="Para onde vamos? Ex.: Braga" aria-label="Pesquisar destino" maxlength="100"/>
+        <button type="submit" id="searchBtn" aria-label="Pesquisar destino">→</button>
+      </form>
+      <div id="destinationResults" class="destination-results" hidden></div>
+      <div class="route-estimate" id="routeEstimate" hidden><span id="routeEstimateText">Destino selecionado</span><button id="clearDestination" type="button" aria-label="Remover destino">×</button></div>
+      <div class="nav-guidance" id="navGuidance" hidden aria-live="polite"><div class="nav-arrow" id="navArrow">↑</div><div class="nav-guidance-copy"><small>PRÓXIMA INDICAÇÃO · PRÉVIA DE ROTA</small><strong id="navInstruction">Siga em frente</strong><span id="navDistance">Percurso planeado · não integra a cobrança</span></div></div>
+      <div class="map-legend"><span><i class="legend-planned"></i> Estrada sugerida</span><span><i class="legend-real"></i> GPS percorrido</span></div>
+      <div class="map-side">
+        <button id="followBtn" title="Seguir veículo" aria-label="Ativar seguimento do veículo" class="map-tool selected" type="button"><svg viewBox="0 0 24 24"><path d="M4 20 20 4 13 20l-3-7z"/></svg></button>
+        <button id="viewBtn" title="Alternar vista de cima ou condução" aria-label="Alternar vista 2D e modo condução" class="map-tool texttool" type="button">3D</button>
+        <button id="zoomIn" title="Ampliar mapa" aria-label="Ampliar mapa" class="map-tool texttool" type="button">+</button>
+        <button id="zoomOut" title="Reduzir mapa" aria-label="Reduzir mapa" class="map-tool texttool" type="button">−</button><button id="mapStyleBtn" title="Mudar estilo do mapa" aria-label="Mudar estilo do mapa" class="map-tool texttool" type="button">▦</button>
+      </div>
+      <div class="drive-distance" id="driveDistance"><span class="drive-distance-icon">⌖</span><span><strong id="driveEta">GPS AO VIVO</strong><small id="driveRemaining">Mapa centrado no veículo</small></span><button type="button" id="overviewBtn">Vista geral</button></div>
+      <div class="map-bottom"><div class="map-heading-current">VEÍCULO <strong id="vehicleLabel">À espera da localização</strong></div><div class="map-heading-current">ESTADO <strong id="statusLabel">A verificar</strong></div></div>
+    </section>
+    <section class="dash">
+      <div class="money-panel">
+        <div class="fare-top"><span><i class="live-dot"></i> ESTIMATIVA ATUAL</span><span id="tripBadge" class="trip-badge">PRONTO A INICIAR</span></div>
+        <div class="fare-value"><span>€</span><strong id="fareValue">3,00</strong></div>
+        <div class="fare-note">Valor estimado pelo percurso realmente medido · rota sugerida não é cobrada</div>
+        <div class="stats"><div><small>DISTÂNCIA</small><strong id="distanceValue">0,00 km</strong></div><div><small>TEMPO</small><strong id="timeValue">00:00</strong></div><div><small>ESPERA</small><strong id="waitValue">00:00</strong></div></div>
+      </div>
+      <div class="buttons"><button id="startBtn" class="action primary" type="button" disabled><span class="icon-button">▶</span><span id="startText">Iniciar viagem</span></button><button id="pauseBtn" class="action second" type="button" disabled>Ⅱ Pausar</button><button id="stopBtn" class="action dark" type="button" disabled>✦ Marcar paragem</button><button id="pickupBtn" class="action dark" type="button" disabled>⌖ Recolha</button><button id="finishBtn" class="action danger" type="button" disabled>■ Finalizar e PDF</button></div>
+      <div class="inline-status"><span id="statusDot" class="status-dot"></span><p id="message" role="status" aria-live="polite">Vamos pedir autorização de localização ao entrar.</p><button id="retryGpsBtn" class="small-link" type="button">GPS</button></div>
+      <div class="mini-panels">
+        <section class="mini-card"><div class="section-heading"><h2>Etapas do percurso</h2><span id="stopsBadge">0 paragens</span></div><div class="timeline" id="timeline"><p class="empty">A viagem ainda não começou.</p></div></section>
+        <section class="mini-card"><div class="section-heading"><h2>Resumo de custos</h2><button class="small-link" id="settingsBtn" type="button">Configurar</button></div><div class="line"><span>Início</span><b id="basePrice">€ 3,00</b></div><div class="line"><span>Quilómetros</span><b id="distancePrice">€ 0,00</b></div><div class="line"><span>Tempo de espera</span><b id="waitingPrice">€ 0,00</b></div><div class="line"><span>Adicional</span><b id="extraPrice">€ 0,00</b></div><div class="line total"><span>Estimativa</span><b id="totalPrice">€ 3,00</b></div></section>
+      </div>
+      <div class="footer-actions"><button class="small-link" id="historyBtn" type="button">Viagens anteriores</button><button class="small-link" id="voiceBtn" type="button">Testar voz</button></div>
+    </section>
+  </main>
+  <footer class="footer">V12.1 · Protótipo de medição e estimativa de custos. Não é um taxímetro homologado, não substitui a autorização legal para transporte remunerado nem garante leituras GPS contínuas em segundo plano. Consulte a <a href="./privacidade.html">política de privacidade</a>. A versão web não garante GPS com ecrã bloqueado; para segundo plano contínuo é necessário o aplicativo nativo. Cartografia © OpenStreetMap / OpenFreeMap; prévias de rotas via OSRM.</footer>
+</div>
+<div id="gpsGate" class="gate" aria-label="Ativar GPS" role="dialog" aria-modal="true">
+  <div class="gate-card"><div class="gate-icon"><svg viewBox="0 0 24 24"><path d="M20 3 3 10l8 3 3 8z"/></svg></div><div class="eyebrow">ROTAMETER PRO · GPS OBRIGATÓRIO</div><h1>Viagens com GPS ativo.</h1><p>Para medir um percurso com precisão, o RotaMeter necessita da sua localização atual. Nada começa a ser contabilizado antes de obter uma posição válida.</p><div class="gate-steps"><span><b>01</b> Localização precisa</span><span><b>02</b> Mapa com ruas e referências</span><span><b>03</b> Estimativas transparentes</span></div><p class="gate-help" id="gateMessage" role="status">A solicitar acesso à localização…</p><button class="gate-button" id="grantGpsBtn" type="button">Permitir localização / Tentar novamente →</button><div class="gate-bottom">Na app nativa, o GPS continua em segundo plano apenas durante uma viagem ativa, com aviso do sistema. Os percursos ficam guardados localmente. <a href="./privacidade.html">Privacidade</a>. Abra em HTTPS no Safari ou Chrome. Se recusou a permissão, altere-a nas definições.</div></div>
+</div>
+<dialog id="finishDialog" class="modal"><div class="modal-inner"><div class="eyebrow">VIAGEM CONCLUÍDA</div><h2>Resumo do percurso</h2><div class="result-money" id="finishValue">€ 0,00</div><div class="result-meta" id="finishMeta"></div><div class="alert-note" id="finishGpsNote" hidden></div><button class="action second" id="downloadGpxBtn" type="button">↓ Guardar rota GPX (mapa completo em outros apps)</button><button class="action primary" id="downloadPdfBtn" type="button">↓ Guardar relatório PDF</button><button class="action second" id="sharePdfBtn" type="button">↗ Partilhar PDF</button><button class="action dark" id="closeFinishBtn" type="button">Fechar e voltar ao mapa</button><button class="small-link center-link" id="newTripBtn" type="button">Preparar nova viagem</button></div></dialog>
+<dialog id="settingsDialog" class="modal"><div class="modal-inner"><div class="section-heading"><h2>Configurações da estimativa</h2><button id="closeSettings" class="modal-x" type="button">×</button></div><p class="modal-sub">Defina os seus parâmetros antes da viagem. Não representam tarifas oficiais.</p><form id="ratesForm" class="rate-form"><label>Valor inicial (€)<input name="base" type="number" step="0.01" min="0" max="1000" required></label><label>Preço por quilómetro (€/km)<input name="km" type="number" step="0.01" min="0" max="100" required></label><label>Espera (€/min)<input name="wait" type="number" step="0.01" min="0" max="100" required></label><label>Adicional fixo (€)<input name="extra" type="number" step="0.01" min="0" max="1000" required></label><button class="action primary" type="submit">Guardar configuração</button></form><div class="modal-sub">As tarifas para carro e mota são perfis de exemplo, não preços oficiais ou homologados. São fixados para cada percurso no momento da partida. O mapa acompanha o veículo; o destino pode gerar uma rota rodoviária prevista. A prévia nunca é incluída no preço: só contam as leituras reais do percurso.</div></div></dialog>
+<dialog id="historyDialog" class="modal"><div class="modal-inner"><div class="section-heading"><h2>Histórico de viagens</h2><button id="closeHistory" class="modal-x" type="button">×</button></div><div id="historyList" class="history-list"></div><button class="small-link center-link" id="clearHistory" type="button">Apagar histórico deste aparelho</button></div></dialog>
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+<script src="./route-geometry.js?v=12-1-realmap" defer></script>
+<script src="./pdf-map.js?v=12-1-realmap" defer></script>
+<script src="./app.js?v=12-1-realmap-20261020" defer></script>
+<script>
+// The navigation beta does not register a cache-first worker: old cached Leaflet builds must not replace V4.
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+ navigator.serviceWorker.getRegistrations().then(rs => {
+  const here = new URL('./',location.href).pathname;
+  rs.filter(r => new URL(r.scope).pathname===here && (r.active?.scriptURL||'').includes('service-worker.js')).forEach(r=>r.unregister());
+ }).catch(()=>{});
+}
+</script>
+</body>
+</html>
