@@ -1,0 +1,54 @@
+name: RotaMeterNative
+options:
+  bundleIdPrefix: com.rotameter
+  deploymentTarget:
+    iOS: '17.0'
+targets:
+  RotaMeterNative:
+    type: application
+    platform: iOS
+    sources:
+      - path: RotaMeterNative
+      - path: Shared/TripActivityAttributes.swift
+      - path: www
+        type: folder
+        buildPhase: resources
+    dependencies:
+      - target: RotaMeterLiveWidget
+        embed: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.rotameter.pro
+        SWIFT_VERSION: 5.9
+        TARGETED_DEVICE_FAMILY: '1,2'
+        CODE_SIGN_ENTITLEMENTS: RotaMeterNative/RotaMeterNative.entitlements
+    info:
+      path: RotaMeterNative/Info.plist
+      properties:
+        CFBundleDisplayName: RotaMeter PRO
+        CFBundleURLTypes:
+          - CFBundleURLName: com.rotameter.pro
+            CFBundleURLSchemes: [rotameter]
+        NSLocationWhenInUseUsageDescription: Usa a localização para registar o percurso e calcular a estimativa da sua viagem.
+        NSLocationAlwaysAndWhenInUseUsageDescription: Mantém a medição GPS em viagem quando usa outras aplicações ou bloqueia o ecrã.
+        UIBackgroundModes: [location, audio]
+        NSSupportsLiveActivities: true
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
+  RotaMeterLiveWidget:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: RotaMeterLiveWidget
+      - path: Shared/TripActivityAttributes.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.rotameter.pro.livewidget
+        SWIFT_VERSION: 5.9
+        TARGETED_DEVICE_FAMILY: '1,2'
+        APPLICATION_EXTENSION_API_ONLY: YES
+    info:
+      path: RotaMeterLiveWidget/Info.plist
+      properties:
+        CFBundleDisplayName: RotaMeter em viagem
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension

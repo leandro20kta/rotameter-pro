@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 72" width="48" height="72" role="img" aria-label="Carro visto de cima">
+<defs>
+ <linearGradient id="paint" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#ffc174"/><stop offset=".4" stop-color="#f27b27"/><stop offset="1" stop-color="#b74717"/></linearGradient>
+ <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#152132"/><stop offset="1" stop-color="#536c83"/></linearGradient>
+ <filter id="shadow" x="-45%" y="-30%" width="200%" height="200%"><feDropShadow dx="0" dy="3" stdDeviation="2" flood-color="#17212d" flood-opacity=".32"/></filter>
+</defs>
+<g filter="url(#shadow)">
+ <rect x="0.5" y="13" width="7" height="15" rx="3" fill="#181c23"/><rect x="40.5" y="13" width="7" height="15" rx="3" fill="#181c23"/>
+ <rect x="0.5" y="48" width="7" height="15" rx="3" fill="#181c23"/><rect x="40.5" y="48" width="7" height="15" rx="3" fill="#181c23"/>
+ <path d="M9 12Q11 4 20 4H28Q37 4 39 12L41 22V56Q40 66 33 69H15Q8 66 7 56V22Z" fill="url(#paint)" stroke="#893919" stroke-width="1"/>
+ <path d="M13 8H35L38 21H10Z" fill="#e88a43" opacity=".8"/>
+ <path d="M13 20L17 13H31L35 20L34 28H14Z" fill="url(#glass)" stroke="#d7e9ed" stroke-opacity=".75" stroke-width="1.2"/>
+ <path d="M14 48H34L36 56H12Z" fill="url(#glass)" stroke="#c7dae2" stroke-opacity=".7" stroke-width="1.1"/>
+ <rect x="12" y="31" width="24" height="14" rx="4.5" fill="#f59a52" stroke="#c25820" stroke-width="1"/>
+ <path d="M9 27L13 28V49L9 52M39 27L35 28V49L39 52" fill="none" stroke="#ffc188" stroke-width="1.6"/>
+ <path d="M11 8H16M32 8H37" stroke="#fff2c1" stroke-width="3" stroke-linecap="round"/>
+ <path d="M12 65H17M31 65H36" stroke="#db2c29" stroke-width="3" stroke-linecap="round"/>
+</g></svg>

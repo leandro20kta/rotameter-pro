@@ -1,0 +1,18 @@
+{
+  "versao": "V13-beta",
+  "js_syntax": "passed",
+  "swift_parser": "passed, not a build",
+  "android_manifest_xml": "passed",
+  "android_structure": "passed, not compiled",
+  "route_geometry": "passed",
+  "ios_native_bridge_playwright": "passed simulated",
+  "android_bridge_playwright": "passed simulated",
+  "voice_bridge_playwright": "passed simulated",
+  "pdf_online_mock": "passed synthetic",
+  "real_iphone_locked": "not tested",
+  "real_android_overlay": "not tested",
+  "ios_ipa": "not built",
+  "android_apk": "not built",
+  "store_review": "not submitted",
+  "live_web_version": "V12.1"
+}

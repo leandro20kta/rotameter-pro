@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 72" width="48" height="72" role="img" aria-label="Mota vista de cima">
+<defs><linearGradient id="m" x1="0" x2=".9" y1="0" y2="1"><stop stop-color="#fff2de"/><stop offset=".4" stop-color="#f78a38"/><stop offset="1" stop-color="#bf471d"/></linearGradient><filter id="d"><feDropShadow dx="0" dy="3" stdDeviation="2" flood-opacity=".35"/></filter></defs>
+<g filter="url(#d)">
+ <rect x="20" y="3" width="8" height="17" rx="4" fill="#1e2632"/><rect x="20" y="52" width="8" height="17" rx="4" fill="#1e2632"/>
+ <path d="M10 21Q24 18 38 21" fill="none" stroke="#1b2331" stroke-width="4" stroke-linecap="round"/>
+ <path d="M17 19Q18 15 24 15Q30 15 31 19L34 27L29 45Q24 50 19 45L14 27Z" fill="url(#m)" stroke="#b94d22" stroke-width="1.5"/>
+ <path d="M19 21L24 17L29 21L29 29H19Z" fill="#354353" stroke="#d5e5f0" stroke-width="1"/>
+ <path d="M21 31H27L30 43H18Z" fill="#222c3a"/>
+ <rect x="16" y="41" width="16" height="6" rx="2" fill="#f59349"/>
+ <path d="M24 8V13" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M24 57V62" stroke="#eb4545" stroke-width="2.5" stroke-linecap="round"/>
+</g></svg>
