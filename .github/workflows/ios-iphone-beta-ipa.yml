@@ -1,0 +1,81 @@
+name: Gerar IPA iPhone (beta, sem assinatura)
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ios-native/**'
+      - '.github/workflows/ios-iphone-beta-ipa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-iphone:
+    name: Compilar para iPhone real sem assinatura
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Preparar o projeto
+        run: |
+          brew install xcodegen
+          cd ios-native
+          xcodegen generate
+      - name: Compilar código ARM64 para dispositivo físico
+        run: |
+          set -euo pipefail
+          cd ios-native
+          xcodebuild -project RotaMeterNative.xcodeproj \
+            -scheme RotaMeterNative \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath "$RUNNER_TEMP/rotameter-device-build" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            build | tee "$RUNNER_TEMP/build-iphone.log"
+      - name: Empacotar IPA para assinatura pessoal (Windows ou Mac)
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os, shutil, subprocess, zipfile, plistlib
+          from pathlib import Path
+          root=Path(os.environ['RUNNER_TEMP'])
+          app=root/'rotameter-device-build/Build/Products/Release-iphoneos/RotaMeterNative.app'
+          assert app.exists(), f'App não foi construída: {app}'
+          with (app/'Info.plist').open('rb') as f: info=plistlib.load(f)
+          assert info.get('CFBundleExecutable') and (app/info['CFBundleExecutable']).exists()
+          assert info.get('CFBundleIdentifier') == 'com.rotameter.pro'
+          assert (app/'www'/'index.html').exists(), 'Faltam ficheiros web incorporados'
+          out=Path('ios-beta-artifacts');out.mkdir(exist_ok=True)
+          for suffix,remove_widget in [('COM_WIDGET',False),('GPS_TESTE_SEM_WIDGET',True)]:
+              work=root/f'ipa_{suffix}'; payload=work/'Payload';payload.mkdir(parents=True)
+              dest=payload/app.name;shutil.copytree(app,dest,symlinks=True)
+              if remove_widget and (dest/'PlugIns').exists():
+                  shutil.rmtree(dest/'PlugIns')
+              target=out/f'RotaMeter_PRO_iPhone_{suffix}_SEM_ASSINAR.ipa'
+              with zipfile.ZipFile(target,'w',zipfile.ZIP_DEFLATED,compresslevel=6) as z:
+                  for p in sorted(work.rglob('*')):
+                      if p.is_file():
+                          z.write(p,p.relative_to(work).as_posix())
+              with zipfile.ZipFile(target) as z:
+                  assert z.testzip() is None
+                  assert f'Payload/{app.name}/{info["CFBundleExecutable"]}' in z.namelist()
+              print(f'{target}: {target.stat().st_size} bytes')
+          PY
+      - name: Enviar pacotes para testes no iPhone
+        uses: actions/upload-artifact@v4
+        with:
+          name: RotaMeter-PRO-iPhone-IPA-SEM-ASSINATURA
+          path: ios-beta-artifacts/*.ipa
+          if-no-files-found: error
+          retention-days: 14
+      - name: Guardar logs em caso de falha
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: log-build-iOS-iPhone
+          path: ${{ runner.temp }}/build-iphone.log
+          if-no-files-found: ignore
