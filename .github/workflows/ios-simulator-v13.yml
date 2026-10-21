@@ -1,0 +1,27 @@
+name: Validar compilação iOS (simulador)
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ios-native/**'
+      - '.github/workflows/ios-simulator-v13.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ios-simulator:
+    runs-on: macos-15
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Preparar projeto Xcode
+        run: |
+          brew install xcodegen
+          cd ios-native
+          xcodegen generate
+      - name: Compilar app e Live Activity (simulador, sem assinatura)
+        run: |
+          cd ios-native
+          xcodebuild -project RotaMeterNative.xcodeproj -scheme RotaMeterNative -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
